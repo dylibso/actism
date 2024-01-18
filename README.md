@@ -59,6 +59,9 @@ Within the `steps` key, you write the pipeline. This must be a line-delimited, "
 
 ```yaml
   with:
+    wasi: true # enable WASI access to all plugins
+    input: '{"some": "data"}' # or `$(cat file.data)` etc. to be used as input to first plugin
+    output_type: text # or `bytes` used to tell the runner how to encode the final plugin's output
     steps: |-
       this is plugin 1 | https://.../plugin.wasm
       this is plugin 2 | ./path/to/local.wasm | override_function_name_to_call
