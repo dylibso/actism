@@ -50,6 +50,8 @@ jobs:
 
 The above step with `id` "actism-image" will count the vowels in the input, convert that to a known format for the image generator, and then use the total count from the first plugin to generate an image with the value encoded. Then the output (out.png) will be uploaded to the summary artifacts on the Action run. 
 
+![out](https://github.com/dylibso/actism/assets/7517515/3a18f70c-a233-4e9d-bac4-2e933904d53b)
+
 You can combine Extism plug-ins and arbitrary GitHub Action steps to execute pipelines to do anything.
 
 ## Next Steps
