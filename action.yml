@@ -1,0 +1,25 @@
+name: 'Actism'
+description: 'Run Extism plug-ins in a pipeline described in a GitHub Action. Each plug-in takes an input given to the plug-in code which processes the input and returns output to the next plug-in. The output is used as the input of the next plug-in.'
+inputs:
+  input:
+    description: 'Initial input to start the pipeline, executing the first plug-in with this "input" value.'
+    required: false
+    default: ''
+  wasi:
+    description: 'Enable/disable WASI support for the entire pipeline.'
+    required: false
+    default: 'false'
+  output_type:
+    description: 'One of "text" or "bytes" to set the encoding of the output data.'
+    required: false
+    default: 'text'
+  steps:
+    description: 'A line-delimited, "|"-segmented  list of Extism plug-ins to run in a pipeline.'
+    required: true
+    default: ''
+outputs:
+  output:
+    description: 'Final output of the last plugin run in this pipeline.'
+runs:
+  using: 'node20'
+  main: 'index.js'
