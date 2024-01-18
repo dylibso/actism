@@ -29,7 +29,8 @@ async function actism(input, steps, wasi, outputType, test) {
       console.log("DEBUG:", step);
     }
 
-    const plugin = await createPlugin(step.source.trim(), { useWasi: wasi });
+    console.log(`Starting step: ${step.name} from ${step.source}`)
+    const plugin = await createPlugin(step.source, { useWasi: wasi });
     const output = await plugin.call(step.entrypoint, pipelineData);
     pipelineData = output.bytes();
   }
