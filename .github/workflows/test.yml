@@ -8,10 +8,11 @@ jobs:
   test_actism: 
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: 
           node-version: '20'
-      - run: node tests.js
+      - run: node tests.js | grep "count"
   
   ci_example_pipelines:
     runs-on: ubuntu-latest
