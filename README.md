@@ -1,9 +1,8 @@
 # Actism
 
-Run Extism plug-ins as a pipeline on GitHub Actions. 
+Run [Extism](https://extism.org) plug-ins as a pipeline on GitHub Actions.
 
 ### Example
-
 
 ```yaml
 name: test action
@@ -53,6 +52,22 @@ The above step with `id` "actism-image" will count the vowels in the input, conv
 ![out](https://github.com/dylibso/actism/assets/7517515/3a18f70c-a233-4e9d-bac4-2e933904d53b)
 
 You can combine Extism plug-ins and arbitrary GitHub Action steps to execute pipelines to do anything.
+
+## Usage
+
+Within the `steps` key, you write the pipeline. This must be a line-delimited, "|"-segmented  list of Extism plug-ins to run in a pipeline. Components are: name | source (url or path) | function (optional export to call, default = run). 
+
+```yaml
+  with:
+    steps: |-
+      this is plugin 1 | https://.../plugin.wasm
+      this is plugin 2 | ./path/to/local.wasm | override_function_name_to_call
+      ...
+```
+
+> *Note*: checkout https://modsurfer.dylibso.com for plug-in hosting!
+
+There is no known limit to the number of plug-ins you can call in a single pipeline. 
 
 ## Next Steps
 
