@@ -34,7 +34,7 @@ jobs:
           name: out.png
           path: ./out.png
 
-      - uses: ./
+      - uses: dylibso/actism@main
         id: actism-text
         with:
           wasi: true
