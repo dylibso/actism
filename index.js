@@ -32,7 +32,7 @@ async function actism(input, steps, wasi, outputType, test) {
       console.log("DEBUG:", step);
     }
 
-    console.log(`Starting step: ${step.name} from ${step.source}`)
+    core.info("Starting step: \u001b[1;95m\033[4m" + step.name + "\033[24m\033[0m (" + step.source + ")")
     const plugin = await createPlugin(step.source, { 
       useWasi: wasi, 
       functions: { "extism:host/user": ActionsBindings(githubToken) } 
@@ -43,8 +43,21 @@ async function actism(input, steps, wasi, outputType, test) {
 
   // set the output from the final step to return from the action
   let output = pipelineData;
-  if (outputType === "text") {
-    output = new TextDecoder().decode(pipelineData);
+  switch (outputType) {
+    case "text":
+      output = new TextDecoder().decode(pipelineData);
+      break;
+    case "json":
+      output = JSON.stringify(
+        JSON.parse(new TextDecoder().decode(pipelineData)),
+        null,
+        2
+      );
+      break;
+    case "bytes":
+      break;
+    default: 
+      throw new Error(`Invalid 'output_type' provided: ${outputType}`)
   }
   if (test) {
     console.log(output);
@@ -68,16 +81,13 @@ const Steps = (input) => {
 
 const ActionsBindings = (githubToken) => {
   const hostFuncs = {};
-  if (githubToken.length === 0) {
-    throw new Error('GitHub API access token is missing')
-  }
   const octokit = github.getOctokit({ 
     auth: githubToken,
-    useAgent: 'dylibso/actism@main',
+    userAgent: 'dylibso/actism@main',
   });
   
   hostFuncs.github_context = (plugin) => {
-    return pluginCaller.store("githubContext = " + JSON.stringify(github.context));
+    return plugin.store("githubContext = " + JSON.stringify(github.context));
   };
 
   hostFuncs.github_open_issue = (plugin, titleOffs, bodyOffs) => {

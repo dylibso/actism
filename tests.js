@@ -3,7 +3,7 @@ const actism = require('./index');
 const input = 'This is a test';
 const steps = 'count vowels | https://github.com/extism/plugins/releases/latest/download/count_vowels.wasm | count_vowels';
 const wasi = true;
-const outputType = "text";
+const outputType = "json";
 const test = true;
 
 actism(input, steps, wasi, outputType, test)

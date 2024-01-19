@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  issues: write
+
 jobs:
   test_actism: 
     runs-on: ubuntu-latest
@@ -41,12 +44,12 @@ jobs:
         with:
           wasi: true
           input: "this is a test"
-          output_type: text
+          output_type: json
           steps: |- # line-delimited set of named plugin calls, where "step()" export is ran
             count vowels | https://github.com/extism/plugins/releases/latest/download/count_vowels.wasm | count_vowels
       - name: check output
         run: |
-          echo '${{ steps.actism-text.outputs.output }}' | grep '"count":4'
+          echo '${{ steps.actism-text.outputs.output }}' | grep '"count": 4'
 
       - uses: ./
         id: actism-open-issue
