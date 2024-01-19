@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  issues: write
+
 jobs:  
   ci_example_pipelines:
     runs-on: ubuntu-latest

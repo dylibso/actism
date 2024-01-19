@@ -19,10 +19,7 @@ async function actism(input, steps, wasi, outputType, test) {
   steps = steps.trim();
   outputType = outputType.trim();
 
-  const githubToken = core.getInput('github_token');
-  if (githubToken.length === 0) {
-    core.info("No `github_token` was read from input");
-  }
+  const githubToken = core.getInput('github_token').trim();
     
   // for each step, run the step() function in the module with the input from the previous step
   let pipelineData = input;
@@ -90,6 +87,9 @@ const ActionsBindings = (githubToken) => {
   };
 
   hostFuncs.github_open_issue = (plugin, titleOffs, bodyOffs) => {
+    if (!githubToken) {
+      core.setFailed(`Actism error: cannot call "gitub_open_issue" without token.`)
+    }
     const title = plugin.read(titleOffs).text();
     const body = plugin.read(bodyOffs).text();
     octokit.rest.issues.create({
