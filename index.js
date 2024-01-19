@@ -19,13 +19,8 @@ async function actism(input, steps, wasi, outputType, test) {
   steps = steps.trim();
   outputType = outputType.trim();
 
-  let githubToken;
-  if (!test) {
-    githubToken = core.getInput('github_token');
-  }
-  if (githubToken) {
-    githubToken = githubToken.trim();
-  }
+  let githubToken = core.getInput('github_token');
+  githubToken = githubToken.trim();
     
   // for each step, run the step() function in the module with the input from the previous step
   let pipelineData = input;
