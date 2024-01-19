@@ -20,7 +20,6 @@ async function actism(input, steps, wasi, outputType, test) {
   outputType = outputType.trim();
 
   let githubToken = core.getInput('github_token');
-  githubToken = githubToken.trim();
   if (githubToken.length === 0) {
     core.info("No `github_token` was read from input");
   }
@@ -84,7 +83,7 @@ const Steps = (input) => {
 
 const ActionsBindings = (githubToken) => {
   const hostFuncs = {};
-  const octokit = github.getOctokit(githubToken);
+  const octokit = github.getOctokit({ auth: githubToken });
   
   hostFuncs.github_context = (plugin) => {
     return plugin.store(JSON.stringify(github.context));
