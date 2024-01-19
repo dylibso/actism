@@ -39,13 +39,6 @@ jobs:
         run: |
           echo '${{ steps.actism-text.outputs.output }}' | grep '"count": 4'
 
-      - name: create an issue
-        uses: dacbd/create-issue-action@main
-        with:
-          token: ${{ github.token }}
-          title: Simple test issue
-          body: my new issue
-
       - uses: ./
         id: actism-open-issue
         with: 

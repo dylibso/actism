@@ -19,7 +19,7 @@ async function actism(input, steps, wasi, outputType, test) {
   steps = steps.trim();
   outputType = outputType.trim();
 
-  let githubToken = core.getInput('github_token');
+  const githubToken = core.getInput('github_token');
   if (githubToken.length === 0) {
     core.info("No `github_token` was read from input");
   }
