@@ -81,7 +81,10 @@ const Steps = (input) => {
 
 const ActionsBindings = (githubToken) => {
   const hostFuncs = {};
-  const octokit = github.getOctokit(githubToken);
+  const octokit = github.getOctokit({ 
+    auth: githubToken,
+    userAgent: 'dylibso/actism',
+  });
   
   hostFuncs.github_context = (plugin) => {
     return plugin.store(JSON.stringify(github.context));
