@@ -45,6 +45,6 @@ jobs:
           wasi: true
           input: ''
           output_type: text
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           steps: |-
             test open issue | https://cdn.modsurfer.dylibso.com/api/v1/module/2ab8f671a0334e7da92c9cd8e0cca0dd710930e6019319126b6bed06aad342e9.wasm | test_open_issue
