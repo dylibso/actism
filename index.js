@@ -30,7 +30,10 @@ async function actism(input, steps, wasi, outputType, test) {
     }
 
     console.log(`Starting step: ${step.name} from ${step.source}`)
-    const plugin = await createPlugin(step.source, { useWasi: wasi });
+    const plugin = await createPlugin(step.source, { 
+      useWasi: wasi, 
+      functions: { "extism:host/user": ActionsBindings() } 
+    });
     const output = await plugin.call(step.entrypoint, pipelineData);
     pipelineData = output.bytes();
   }
@@ -58,6 +61,16 @@ const Steps = (input) => {
 
     return { name, source, entrypoint };
   })
+}
+
+const ActionsBindings = () => {
+  const hostFuncs = {};
+  
+  hostFuncs.github_context = (pluginCaller, offset) => {
+    return pluginCaller.store("githubContext = " + JSON.stringify(github.context));
+  };
+  
+  return hostFuncs;
 }
 
 actism().catch(e => {
