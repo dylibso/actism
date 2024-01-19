@@ -87,8 +87,9 @@ const ActionsBindings = (githubToken) => {
   };
 
   hostFuncs.github_open_issue = (plugin, titleOffs, bodyOffs) => {
-    if (!githubToken) {
-      core.setFailed(`Actism error: cannot call "gitub_open_issue" without token.`)
+    if (githubToken.length === 0) {
+      core.setFailed(`Actism error: cannot call "gitub_open_issue" without token.`);
+      return;
     }
     const title = plugin.read(titleOffs).text();
     const body = plugin.read(bodyOffs).text();
