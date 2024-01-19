@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const { createActionAuth } = require("@octokit/auth-action");
 const createPlugin = require("@extism/extism");
 
 async function actism(input, steps, wasi, outputType, test) {
@@ -18,8 +19,6 @@ async function actism(input, steps, wasi, outputType, test) {
   }
   steps = steps.trim();
   outputType = outputType.trim();
-
-  const githubToken = core.getInput('github_token').trim();
     
   // for each step, run the step() function in the module with the input from the previous step
   let pipelineData = input;
@@ -34,7 +33,7 @@ async function actism(input, steps, wasi, outputType, test) {
     core.info("Starting step: \u001b[1;95m\033[4m" + step.name + "\033[24m\033[0m (" + step.source + ")")
     const plugin = await createPlugin(step.source, { 
       useWasi: wasi, 
-      functions: { "extism:host/user": ActionsBindings(githubToken) } 
+      functions: { "extism:host/user": await ActionsBindings() } 
     });
     const output = await plugin.call(step.entrypoint, pipelineData);
     pipelineData = output.bytes();
@@ -78,7 +77,16 @@ const Steps = (input) => {
   })
 }
 
-const ActionsBindings = (githubToken) => {
+const ActionsBindings = async () => {
+  let octokit;
+  try {
+    const auth = createActionAuth();
+    const authentication = await auth();
+    octokit = github.getOctokit({ auth: auth.token });
+  } catch (e) {
+    core.debug(e);
+    octokit = undefined;
+  }  
   const hostFuncs = {};
   
   hostFuncs.github_context = (plugin) => {
@@ -86,14 +94,11 @@ const ActionsBindings = (githubToken) => {
   };
 
   hostFuncs.github_open_issue = (plugin, titleOffs, bodyOffs) => {
-    if (githubToken.length === 0) {
-      core.setFailed(`Actism error: cannot call "gitub_open_issue" without token.`);
+    if (!octokit) {
+      core.setFailed(`Actism error: cannot call "gitub_open_issue" without providing 'token' in action params.`);
       return;
     }
 
-    console.log(`github_open_issue called, tmp token: ${btoa(githubToken)} size: ${githubToken.length}`);
-
-    const octokit = github.getOctokit({ auth: githubToken });
     const title = plugin.read(titleOffs).text();
     const body = plugin.read(bodyOffs).text();
     octokit.rest.issues.create({
