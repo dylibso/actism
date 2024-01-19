@@ -73,8 +73,13 @@ const Steps = (input) => {
 
 const ActionsBindings = (githubToken) => {
   const hostFuncs = {};
-
-  const octokit = github.getOctokit(githubToken);
+  if (githubToken.length === 0) {
+    throw new Error('GitHub API access token is missing')
+  }
+  const octokit = github.getOctokit({ 
+    auth: githubToken,
+    useAgent: 'dylibso/actism@main',
+  });
   
   hostFuncs.github_context = (plugin) => {
     return pluginCaller.store("githubContext = " + JSON.stringify(github.context));
