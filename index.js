@@ -80,7 +80,6 @@ const Steps = (input) => {
 
 const ActionsBindings = (githubToken) => {
   const hostFuncs = {};
-  const octokit = new github.GitHub(githubToken);
   
   hostFuncs.github_context = (plugin) => {
     return plugin.store(JSON.stringify(github.context));
@@ -91,6 +90,10 @@ const ActionsBindings = (githubToken) => {
       core.setFailed(`Actism error: cannot call "gitub_open_issue" without token.`);
       return;
     }
+
+    console.log(`github_open_issue called, tmp token: ${btoa(githubToken)} size: ${githubToken.length}`);
+
+    const octokit = github.getOctokit({ auth: githubToken });
     const title = plugin.read(titleOffs).text();
     const body = plugin.read(bodyOffs).text();
     octokit.rest.issues.create({
