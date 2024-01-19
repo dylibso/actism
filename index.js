@@ -18,6 +18,14 @@ async function actism(input, steps, wasi, outputType, test) {
   }
   steps = steps.trim();
   outputType = outputType.trim();
+
+  let githubToken;
+  if (!test) {
+    githubToken = core.getInput('github_token');
+  }
+  if (githubToken) {
+    githubToken = githubToken.trim();
+  }
     
   // for each step, run the step() function in the module with the input from the previous step
   let pipelineData = input;
@@ -32,7 +40,7 @@ async function actism(input, steps, wasi, outputType, test) {
     console.log(`Starting step: ${step.name} from ${step.source}`)
     const plugin = await createPlugin(step.source, { 
       useWasi: wasi, 
-      functions: { "extism:host/user": ActionsBindings() } 
+      functions: { "extism:host/user": ActionsBindings(githubToken) } 
     });
     const output = await plugin.call(step.entrypoint, pipelineData);
     pipelineData = output.bytes();
@@ -63,12 +71,24 @@ const Steps = (input) => {
   })
 }
 
-const ActionsBindings = () => {
+const ActionsBindings = (githubToken) => {
   const hostFuncs = {};
+
+  const octokit = github.getOctokit(githubToken);
   
-  hostFuncs.github_context = (pluginCaller, offset) => {
+  hostFuncs.github_context = (plugin) => {
     return pluginCaller.store("githubContext = " + JSON.stringify(github.context));
   };
+
+  hostFuncs.github_open_issue = (plugin, titleOffs, bodyOffs) => {
+    const title = plugin.read(titleOffs).text();
+    const body = plugin.read(bodyOffs).text();
+    octokit.rest.issues.create({
+      ...github.context.repo,
+      title,
+      body
+    });
+  }
   
   return hostFuncs;
 }

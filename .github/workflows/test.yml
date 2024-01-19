@@ -30,7 +30,7 @@ jobs:
             generate png | https://cdn.modsurfer.dylibso.com/api/v1/module/2c9eb901052b1e6397d2414bdb796975407cc87085e6b5fe9564932538d8af51.wasm | handle
       - name: check output
         run: |
-          echo '${{steps.actism-image.outputs.output}}' | jq '.value' | base64 -d -i > out.png
+          echo '${{ steps.actism-image.outputs.output }}' | jq '.value' | base64 -d -i > out.png
       - uses: actions/upload-artifact@v4
         with:
           name: out.png
@@ -46,4 +46,14 @@ jobs:
             count vowels | https://github.com/extism/plugins/releases/latest/download/count_vowels.wasm | count_vowels
       - name: check output
         run: |
-          echo '${{steps.actism-text.outputs.output}}' | grep '"count":4'
+          echo '${{ steps.actism-text.outputs.output }}' | grep '"count":4'
+
+      - uses: ./
+        id: actism-open-issue
+        with: 
+          wasi: true
+          input: ''
+          output_type: text
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          steps: |-
+            test open issue | https://cdn.modsurfer.dylibso.com/api/v1/module/2ab8f671a0334e7da92c9cd8e0cca0dd710930e6019319126b6bed06aad342e9.wasm

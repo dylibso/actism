@@ -17,6 +17,10 @@ inputs:
     description: 'A line-delimited, "|"-segmented  list of Extism plug-ins to run in a pipeline. Components are: name | source (url or path) | function (optional export to call, default = run)'
     required: true
     default: ''
+  github_token:
+    description: 'The access token to use with authorized GitHub API calls.'
+    required: false
+    default: ''
 outputs:
   output:
     description: 'Final output of the last plugin run in this pipeline.'
